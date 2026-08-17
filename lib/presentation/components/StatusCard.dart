@@ -10,8 +10,7 @@ class StatusCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        // rgba(133,160,178,0.26) from Figma — a translucent slate
-        // overlay on the dark sidebar, not a solid navy card.
+       
         color: const Color(0x4285A0B2),
         borderRadius: BorderRadius.circular(8),
       ),

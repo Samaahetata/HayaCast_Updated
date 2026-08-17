@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hyacast/presentation/components/PriorityAlertRow.dart';
+import '../components/priority_alert_row.dart';
 
 import '../../core/theme/hyacast_colors.dart';
 import '../../data/models/priority_alert.dart';

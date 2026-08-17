@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hyacast/presentation/components/StatCard.dart';
+import '../components/stat_card.dart';
 import '../../data/models/stat_item.dart';
 
 class StatCardsRow extends StatelessWidget {

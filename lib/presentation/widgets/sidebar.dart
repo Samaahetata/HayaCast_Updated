@@ -1,24 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:hyacast/presentation/components/SidebarItem.dart';
 import 'package:hyacast/presentation/components/StatusCard.dart';
-
+import '../components/sidebar_item.dart';
+import '../components/sidebar_logo.dart';
 import '../../core/theme/hyacast_colors.dart';
 
-/// Which top-level screen the sidebar is currently pointing at. Add a
-/// case here whenever a new sidebar destination is introduced.
-enum AppScreen { monitoring, imageAnalysis }
-
+/// The app's fixed left navigation rail: logo, nav items, and the
+/// connection status card. There's currently a single screen
+/// (Monitoring), so this is static — no selection state to manage.
+/// If a second screen is added later, give this widget a `current`/
+/// `onTap` pair again rather than hardcoding.
 class Sidebar extends StatelessWidget {
-  const Sidebar({
-    super.key,
-    required this.current,
-    required this.onMonitoringTap,
-    required this.onImageAnalysisTap,
-  });
-
-  final AppScreen current;
-  final VoidCallback onMonitoringTap;
-  final VoidCallback onImageAnalysisTap;
+  const Sidebar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,67 +18,22 @@ class Sidebar extends StatelessWidget {
       width: 280,
       color: HyaCastColors.sidebarBg,
       padding: const EdgeInsets.all(24),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Logo
-          Row(
-            children: [
-              ShaderMask(
-                shaderCallback: (bounds) => const LinearGradient(
-                  colors: [
-                    HyaCastColors.gradientStart,
-                    HyaCastColors.gradientEnd,
-                  ],
-                ).createShader(bounds),
-                child: const Text(
-                  'HyaCast',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+          SidebarLogo(),
 
-              const Text(
-                '.',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  color: HyaCastColors.gradientStart,
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 40),
-
-          // Monitoring
+          SizedBox(height: 40),
 
           SidebarItem(
             icon: Icons.gps_fixed,
             label: 'Monitoring',
-            selected: current == AppScreen.monitoring,
-            onTap: onMonitoringTap,
+            selected: true,
           ),
 
-          const SizedBox(height: 8),
+          Spacer(),
 
-          // Image Analysis
-
-          SidebarItem(
-            icon: Icons.photo_library_outlined,
-            label: 'Image Analysis',
-            selected: current == AppScreen.imageAnalysis,
-            onTap: onImageAnalysisTap,
-          ),
-
-          const Spacer(),
-
-          // Status Card
-
-          const StatusCard(),
+          StatusCard(),
         ],
       ),
     );

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:hyacast/presentation/components/RiskBadge.dart';
-import 'package:hyacast/presentation/components/TableCell.dart';
-import 'package:hyacast/presentation/components/TableHeaderCell.dart';
+import '../components/risk_badge.dart';
+import '../components/table_cell.dart';
+import '../components/table_header_cell.dart';
 
 import '../../core/theme/hyacast_colors.dart';
 import '../../data/models/spread_row.dart';

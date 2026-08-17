@@ -1,7 +1,7 @@
 // Sidebar Item
 
 import 'package:flutter/material.dart';
-import 'package:hyacast/core/theme/hyacast_colors.dart';
+import '../../core/theme/hyacast_colors.dart';
 
 class SidebarItem extends StatelessWidget {
   const SidebarItem({

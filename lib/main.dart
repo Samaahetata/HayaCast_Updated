@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/theme/hyacast_colors.dart';
+import 'data/repositories/api_dashboard_repository.dart';
 import 'data/repositories/dashboard_repository.dart';
-import 'data/repositories/mock_dashboard_repository.dart';
-import 'presentation/cubit/navigation_cubit.dart';
-import 'presentation/screens/dashboard_screen.dart';
-import 'presentation/widgets/sidebar.dart';
+import 'presentation/widgets/app_shell.dart';
 
 void main() {
   runApp(const HyaCastApp());
 }
 
+/// App bootstrap only: theming and which [DashboardRepository]
+/// implementation is wired in. All actual screen composition lives in
+/// [AppShell]; the dashboard's own loading/error/data state lives in
+/// its cubit (see `presentation/cubit/dashboard_cubit.dart`).
 class HyaCastApp extends StatelessWidget {
   const HyaCastApp({super.key});
 
-  // Swap this line for a real implementation (e.g. ApiDashboardRepository)
-  // once the backend is ready — nothing else has to change.
-  static final DashboardRepository dashboardRepository = MockDashboardRepository();
+  // Live data from the Raqib AI Engine (api_full.py's /dashboard
+  // endpoint). Swap back to MockDashboardRepository() if you need to
+  // work on the UI without the backend running.
+  static final DashboardRepository dashboardRepository = ApiDashboardRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -25,34 +27,9 @@ class HyaCastApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'HyaCast',
       theme: ThemeData(useMaterial3: true, fontFamily: 'Geist'),
-      home: BlocProvider(
-        create: (_) => NavigationCubit(),
-        child: Scaffold(
-          backgroundColor: HyaCastColors.bg,
-          body: BlocBuilder<NavigationCubit, AppScreen>(
-            builder: (context, screen) {
-              final nav = context.read<NavigationCubit>();
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Sidebar(
-                    current: screen,
-                    onMonitoringTap: nav.showMonitoring,
-                    // Image Analysis screen isn't part of this bundle —
-                    // the tap still updates the cubit, it just has
-                    // nowhere else to navigate to yet.
-                    onImageAnalysisTap: nav.showImageAnalysis,
-                  ),
-                  Expanded(
-                    child: DashboardBody(
-                      repository: dashboardRepository,
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
+      home: Scaffold(
+        backgroundColor: HyaCastColors.bg,
+        body: AppShell(dashboardRepository: dashboardRepository),
       ),
     );
   }

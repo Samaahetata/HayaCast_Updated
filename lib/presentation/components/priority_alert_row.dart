@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hyacast/core/theme/hyacast_colors.dart';
-import 'package:hyacast/data/models/priority_alert.dart';
-import 'package:hyacast/presentation/components/RiskBadge.dart';
+import '../../core/theme/hyacast_colors.dart';
+import '../../data/models/priority_alert.dart';
+import 'risk_badge.dart';
 
 class PriorityAlertRow extends StatelessWidget {
-  const PriorityAlertRow({required this.alert});
+  const PriorityAlertRow({super.key, required this.alert});
 
   final PriorityAlert alert;
 

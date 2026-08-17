@@ -60,10 +60,7 @@ class DashboardHeader extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text.rich(
                       TextSpan(
-                        // Explicit fontFamily: RichText/Text.rich spans
-                        // don't inherit ThemeData.fontFamily, so this
-                        // was silently rendering in the platform's
-                        // default font instead of Geist.
+                       
                         style: const TextStyle(
                           fontFamily: 'Geist',
                           fontSize: 12,

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hyacast/core/theme/hyacast_colors.dart';
+import '../../core/theme/hyacast_colors.dart';
 
 class StatCard extends StatelessWidget {
-  const StatCard({required this.label, required this.value, required this.icon});
+  const StatCard({super.key, required this.label, required this.value, required this.icon});
 
   final String label;
   final String value;

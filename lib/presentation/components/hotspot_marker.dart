@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hyacast/core/theme/hyacast_colors.dart';
-import 'package:hyacast/data/models/risk_hotspot.dart';
+import '../../core/theme/hyacast_colors.dart';
+import '../../data/models/risk_hotspot.dart';
 
 class HotspotMarker extends StatelessWidget {
-  const HotspotMarker({required this.hotspot});
+  const HotspotMarker({super.key, required this.hotspot});
 
   final RiskHotspot hotspot;
 
