@@ -8,7 +8,9 @@ import 'package:latlong2/latlong.dart';
 import '../../core/config/app_config.dart';
 import '../../core/theme/hyacast_colors.dart';
 import '../../data/models/region_bounds.dart';
+import '../../data/repositories/geocoding_repository.dart';
 import '../components/map_analysis_badge.dart';
+import '../components/map_search_bar.dart';
 import '../cubit/map_analysis_cubit.dart';
 
 /// The Hyacinth Risk Map card. Owns the [MapAnalysisCubit] and the
@@ -24,6 +26,7 @@ class RiskMapCard extends StatefulWidget {
 class _RiskMapCardState extends State<RiskMapCard> {
   late final MapAnalysisCubit _cubit;
   final MapController _mapController = MapController();
+  final GeocodingRepository _geocoding = GeocodingRepository();
   Timer? _debounce;
 
   static const _initialCenter = LatLng(AppConfig.initialLat, AppConfig.initialLng);
@@ -63,6 +66,14 @@ class _RiskMapCardState extends State<RiskMapCard> {
 
     if (!mounted) return;
     _cubit.analyzeRegion(region);
+  }
+
+  /// Looks up [query] and recenters the map there. Moving the map
+  /// fires the same [_onMapEvent] the user's own panning/zooming
+  /// triggers, so the visible region gets re-analyzed automatically.
+  Future<void> _searchAndMove(String query) async {
+    final target = await _geocoding.searchPlace(query);
+    _mapController.move(target, 14);
   }
 
   @override
@@ -111,6 +122,11 @@ class _RiskMapCardState extends State<RiskMapCard> {
                       child: BlocBuilder<MapAnalysisCubit, MapAnalysisState>(
                         builder: (context, state) => MapAnalysisBadge(state: state),
                       ),
+                    ),
+                    Positioned(
+                      top: 12,
+                      right: 12,
+                      child: MapSearchBar(onSearch: _searchAndMove),
                     ),
                   ],
                 ),

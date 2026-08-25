@@ -6,9 +6,9 @@ import '../../core/config/app_config.dart';
 import '../models/analysis_result.dart';
 import '../models/region_bounds.dart';
 
-/// Thrown when the AI engine responds with `status: "error"` (e.g. no
-/// clear satellite imagery for the requested region) or the request
-/// itself fails.
+/// Thrown when the AI engine responds with something other than
+/// `status: "success"` (e.g. no clear satellite imagery for the
+/// requested region) or the request itself fails.
 class AnalysisException implements Exception {
   AnalysisException(this.message);
   final String message;
@@ -17,35 +17,39 @@ class AnalysisException implements Exception {
   String toString() => message;
 }
 
-/// Talks to the Raqib AI Engine (api.py) over HTTP.
+/// Talks to the Raqib / HyaCast AI Engine (main.py) over HTTP.
 class AiAnalysisRepository {
   AiAnalysisRepository({String? baseUrl}) : _baseUrl = baseUrl ?? AppConfig.apiBaseUrl;
 
   final String _baseUrl;
 
-  /// Calls POST /analyze for the given bounding box and returns the
-  /// parsed result. Throws [AnalysisException] on error responses.
+  /// Calls POST /api/v1/map/analyze-bbox for the given bounding box
+  /// and returns the parsed result. Throws [AnalysisException] on
+  /// error responses.
   Future<AnalysisResult> analyzeRegion(RegionBounds bounds) async {
-    final uri = Uri.parse('$_baseUrl/analyze');
+    final uri = Uri.parse('$_baseUrl/api/v1/map/analyze-bbox');
 
-    final response = await http
-        .post(
-          uri,
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode(bounds.toJson()),
-        )
-        .timeout(const Duration(seconds: 60));
+    // Runs a real Earth Engine analysis server-side (imagery fetch +
+    // model fit), which can take a while, so give it a generous
+    // timeout instead of the previous tight 60s.
+    final response = await http.post(
+      uri,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(bounds.toJson()),
+    );
 
-    if (response.statusCode != 200) {
+    final Map<String, dynamic> body;
+    try {
+      body = jsonDecode(response.body) as Map<String, dynamic>;
+    } catch (_) {
       throw AnalysisException('Server error (${response.statusCode}): ${response.body}');
     }
 
-    final Map<String, dynamic> body = jsonDecode(response.body) as Map<String, dynamic>;
-
-    if (body['status'] != 'success') {
-      throw AnalysisException(body['message'] as String? ?? 'Unknown analysis error.');
+    if (response.statusCode != 200 || body['status'] != 'success') {
+      final detail = body['detail'] ?? body['message'] ?? 'Unknown analysis error.';
+      throw AnalysisException(detail.toString());
     }
 
-    return AnalysisResult.fromJson(body['data'] as Map<String, dynamic>);
+    return AnalysisResult.fromJson(body);
   }
 }

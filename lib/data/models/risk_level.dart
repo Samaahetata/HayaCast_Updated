@@ -11,6 +11,7 @@ enum RiskLevel {
       case 'high':
         return RiskLevel.high;
       case 'moderate':
+      case 'medium':
         return RiskLevel.moderate;
       case 'low':
         return RiskLevel.low;

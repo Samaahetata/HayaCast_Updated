@@ -1,5 +1,8 @@
 import 'risk_level.dart';
 
+/// One waterway segment, as returned inside `spread_overview` by
+/// GET /api/v1/dashboard/overview. Same JSON shape as the segments
+/// used for [PriorityAlert] — see that class for an example payload.
 class SpreadRow {
   const SpreadRow({
     required this.area,
@@ -20,13 +23,16 @@ class SpreadRow {
   final double coverageFraction;
 
   factory SpreadRow.fromJson(Map<String, dynamic> json) {
+    final coverage = (json['coverage_percentage'] as num?)?.toDouble() ?? 0.0;
+    final critical = json['days_to_critical'];
+
     return SpreadRow(
-      area: json['area'] as String,
-      segmentId: json['segment_id'] as String,
-      level: RiskLevel.fromString(json['level'] as String),
-      growthRateLabel: json['growth_rate_label'] as String,
-      criticalInLabel: json['critical_in_label'] as String,
-      coverageFraction: (json['coverage_fraction'] as num).toDouble(),
+      area: json['area_name'] as String? ?? json['area'] as String? ?? '',
+      segmentId: json['segment_id'] as String? ?? '',
+      level: RiskLevel.fromString(json['risk_level'] as String? ?? json['level'] as String? ?? 'Low'),
+      growthRateLabel: json['growth_rate_weekly'] as String? ?? json['growth_rate_label'] as String? ?? '',
+      criticalInLabel: critical is num ? '${critical.round()} days' : (critical as String? ?? '—'),
+      coverageFraction: coverage / 100.0,
     );
   }
 
